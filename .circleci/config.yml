@@ -1,0 +1,58 @@
+version: 2.1
+
+orbs:
+  discord: antonioned/discord@0.1.0
+
+
+
+jobs:
+  lint-frontend:
+    docker:
+      - image: circleci/node:13.8.0
+    steps:
+      - checkout
+      - restore_cache:
+          keys: [frontend-build]
+      - run:
+          name: Lint frontend
+          command: |
+            cd frontend
+            npm install
+            npm run build
+      - save_cache:
+          paths: [frontend/node_modules]
+          key: frontend-build
+
+      - discord/status:
+          success_message: HALLAAA MAAK  ${CIRCLE_JOB} job was successful! 3AK 3EEK \n \n **User** ${CIRCLE_USERNAME} \n **Branch** ${CIRCLE_BRANCH} \n \n **Commit Message** ${COMMIT_MESSAGE}\n **Commit ID** ${CIRCLE_SHA1} \n
+          failure_message: Ooops! The ${CIRCLE_JOB} job has failed!     \n \n **User** ${CIRCLE_USERNAME} \n **Branch** ${CIRCLE_BRANCH} \n \n **Commit Message** ${COMMIT_MESSAGE}\n **Commit ID** ${CIRCLE_SHA1} \n
+          webhook: ${bou3ich_webhook}          
+
+  build-backend:
+    docker:
+      - image: circleci/node:13.8.0
+    steps:
+      - checkout
+      - restore_cache:
+          keys: [backend-build]
+      - run:
+          name: Backend build
+          command: |
+            cd backend
+            npm install
+            npm run build
+      - save_cache:
+          paths: [backend/node_modules]
+          key: backend-build
+
+      - discord/status:
+          success_message: HALLAAA MAAK  ${CIRCLE_JOB} job was successful! 3AK 3EEK \n \n **User** ${CIRCLE_USERNAME} \n **Branch** ${CIRCLE_BRANCH} \n \n **Commit Message** ${COMMIT_MESSAGE}\n **Commit ID** ${CIRCLE_SHA1} \n
+          failure_message: Ooops! The ${CIRCLE_JOB} job has failed!     \n \n **User** ${CIRCLE_USERNAME} \n **Branch** ${CIRCLE_BRANCH} \n \n **Commit Message** ${COMMIT_MESSAGE}\n **Commit ID** ${CIRCLE_SHA1} \n
+          webhook: ${bou3ich_webhook}   
+
+          
+workflows:
+  default:
+    jobs:
+      - lint-frontend
+      - build-backend
