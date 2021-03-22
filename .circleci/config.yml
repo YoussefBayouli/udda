@@ -28,7 +28,7 @@ jobs:
           failure_message: Ooops! The ${CIRCLE_JOB} job has failed!     \n \n **User** ${CIRCLE_USERNAME} \n **Branch** ${CIRCLE_BRANCH} \n \n **Commit Message** ${COMMIT_MESSAGE}\n **Commit ID** ${CIRCLE_SHA1} \n
           webhook: ${bou3ich_webhook}          
 
-  build-backend:
+  build-frontend:
     docker:
       - image: circleci/node:13.8.0
     steps:
@@ -55,4 +55,4 @@ workflows:
   default:
     jobs:
       - lint-frontend
-      - build-backend
+      - build-frontend
