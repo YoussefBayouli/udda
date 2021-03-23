@@ -62,7 +62,33 @@ jobs:
           failure_message: Ooops! The ${CIRCLE_JOB} job has failed!     \n \n **User** ${CIRCLE_USERNAME} \n **Branch** ${CIRCLE_BRANCH} \n \n **Commit Message** ${COMMIT_MESSAGE}\n **Commit ID** ${CIRCLE_SHA1} \n
           webhook: ${bou3ich_webhook}     
                
-              
+  test-frontend:
+    docker:
+      - image: circleci/node:13.8.0
+    steps:
+      - checkout
+      - restore_cache:
+          keys: [frontend-build]
+      - run:
+          name: Run frontend test
+          command: |
+            cd frontend
+            npm install
+            npm run test
+                
+  test-backend:
+    docker:
+      - image: circleci/node:13.8.0
+    steps:
+      - checkout
+      - restore_cache:
+          keys: [backend-build]
+      - run:
+          name: Run backend tests
+          command: |
+            cd backend
+            npm install
+            npm run test                 
   
 
 workflows:
@@ -70,3 +96,7 @@ workflows:
     jobs:
       - lint-frontend
       - build-backend
+      - test-frontend:
+          requires: [lint-frontend]
+      - test-backend:
+          requires: [build-backend]
