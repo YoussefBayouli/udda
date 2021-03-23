@@ -144,7 +144,6 @@ jobs:
       - image: amazon/aws-cli
     steps:
       - checkout
-      -run: apt-get install curl
       - run: yum -y install tar gzip
       - run:
           name: Ensure backend infrastructure exist
