@@ -1,96 +1,87 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo_text.svg" width="320" alt="Nest Logo" /></a>
-</p>
+# Frontend Boilerplate with React, Redux & TypeScript
 
-[travis-image]: https://api.travis-ci.org/nestjs/nest.svg?branch=master
-[travis-url]: https://travis-ci.org/nestjs/nest
-[linux-image]: https://img.shields.io/travis/nestjs/nest/master.svg?label=linux
-[linux-url]: https://travis-ci.org/nestjs/nest
+A bare minimum react-redux-webpack-typescript boilerplate with TodoMVC example.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="blank">Node.js</a> framework for building efficient and scalable server-side applications, heavily inspired by <a href="https://angular.io" target="blank">Angular</a>.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore"><img src="https://img.shields.io/npm/dm/@nestjs/core.svg" alt="NPM Downloads" /></a>
-<a href="https://travis-ci.org/nestjs/nest"><img src="https://api.travis-ci.org/nestjs/nest.svg?branch=master" alt="Travis" /></a>
-<a href="https://travis-ci.org/nestjs/nest"><img src="https://img.shields.io/travis/nestjs/nest/master.svg?label=linux" alt="Linux" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#5" alt="Coverage" /></a>
-<a href="https://gitter.im/nestjs/nestjs?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=body_badge"><img src="https://badges.gitter.im/nestjs/nestjs.svg" alt="Gitter" /></a>
-<a href="https://opencollective.com/nest#backer"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec"><img src="https://img.shields.io/badge/Donate-PayPal-dc3d53.svg"/></a>
-  <a href="https://twitter.com/nestframework"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+[Live demo](https://rokoroku.github.io/react-redux-typescript-boilerplate)
 
-## Description
+Note that this project does not include **Server-Side Rendering**, **Static code analysis**, **Testing Frameworks** and other stuffs that makes the package unnecessarily complicated. (e.g. yarn, tslint, jest, ...)  
+If needed, please fork this repository and add your own that meets your requirements.
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+Ideal for creating React apps from the scratch.
 
-## Installation
+See also: [react-mobx-typescript-boilerplate](https://github.com/rokoroku/react-mobx-typescript-boilerplate)
 
-1st, login with NPM using `npm login`. That way you can access the private packages.
+## Contains
 
-2nd...
+- [x] [Typescript](https://www.typescriptlang.org/) 3
+- [x] [React](https://facebook.github.io/react/) 16.4
+- [x] [Redux](https://github.com/reactjs/redux) 4
+- [x] [React Router](https://github.com/ReactTraining/react-router) 4.3
+- [x] [React Router Redux](https://github.com/reactjs/react-router-redux) 5
+- [x] [Redux DevTools Extension](https://github.com/zalmoxisus/redux-devtools-extension)
+- [x] [TodoMVC example](http://todomvc.com)
 
-```bash
+### Build tools
+
+- [x] [Webpack](https://webpack.github.io) 4
+  - [x] [Tree Shaking](https://medium.com/@Rich_Harris/tree-shaking-versus-dead-code-elimination-d3765df85c80)
+  - [x] [Webpack Dev Server](https://github.com/webpack/webpack-dev-server)
+- [x] [Typescript Loader](https://github.com/TypeStrong/ts-loader)
+- [x] [PostCSS Loader](https://github.com/postcss/postcss-loader)
+  - [x] [PostCSS Preset Env](https://preset-env.cssdb.org/)
+  - [x] [CSS modules](https://github.com/css-modules/css-modules)
+- [x] [React Hot Loader](https://github.com/gaearon/react-hot-loader)
+- [x] [Mini CSS Extract Plugin](https://github.com/webpack-contrib/mini-css-extract-plugin)
+- [x] [HTML Webpack Plugin](https://github.com/ampedandwired/html-webpack-plugin)
+- [x] [Prettier](https://github.com/prettier/prettier)
+
+## Setup
+
+```
 $ npm install
 ```
 
-## Running the app
+## Running
 
-```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# incremental rebuild (webpack)
-$ npm run webpack
-$ npm run start:hmr
-
-# production mode
-$ npm run start:prod
+```
+$ npm start
 ```
 
-## Test
+## Build
 
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+```
+$ npm run build
 ```
 
-## Support
+## Prettier
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+```
+$ npm run prettier
+```
 
-## Stay in touch
+# License
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+MIT
 
-## License
+# Glee-Specific Config
 
-Nest is [MIT licensed](LICENSE).
+## Connecting to Backend
 
-## Status/Healthcheck Endpoint
+During build, CRA will import the backend API url from `API_URL` which you can use via `process.env.API_URL`. To change the value of this locally, add that as an environment variable and set it to whatever you need. You can also create a `.env` file, of course.
 
-This API comes with a simple endpoint that provides it's status. If the API is not working, neither will the endpoint. This can be useful for load balancers and other applications that periodically check on the availability of a service.
+Example:
 
-`GET /status` => `{ status: "ok" }`
+```
+API_URL=http://localhost:3030
+```
 
-## Logging with Loggly
+## Relative Paths in HTML
 
-We are using Loggly with Winston to track log messages remotely. If you want to send your logs to Loggly, you should configure the following variables in your environment (either with `.env` or in your operating system):
+When deploying to a folder instead of the root on a web server, you need paths to resources to be relative (ex: `./scripts` instead of `/scripts`). To force webpack to generate relative paths, add a `FRONTEND_URL` to your environment with the url to your application.
+
+## Logging
+
+We are using Loggly to track log messages remotely. If you want to send your logs to Loggly for some reason, you should configure the following variables in your environment (either with `.env` or in your operating system):
 
 ```
 LOGGLY_SUBDOMAIN=yoursubdomain
@@ -98,89 +89,11 @@ LOGGLY_TOKEN=yourlogglytoken
 LOGGLY_LEVEL=info
 ```
 
-You can obtain a free account from Loggly to test.
+## E2E Tests with Ghost Inspector
 
-## Logging with Slack
-
-You can also log things like errors to Slack to get faster notifications. If you want to send your logs to Slack, you should configure the following variables in your environment (either with `.env` or in your operating system):
+You will need the following env vars for Ghost Inspector tests to run in CI/CD:
 
 ```
-SLACK_LOGGER_WEBHOOK=some webhook from slack
-SLACK_LOGGER_CHANNEL=channelName
+GHOST_SUITE_ID=5bdb36e08faf2b12926e7cf4
+GHOST_API_KEY=da6f8fa10c129df055519e634530b531d3c068e5
 ```
-
-To further customize the log messages, you can also include these optional env vars:
-
-```
-SLACK_LOGGER_USERNAME=Sync Errors
-SLACK_LOGGER_ICON_URL=http://someImage.com
-SLACK_LOGGER_LOG_LEVEL=error
-```
-
-## Migrations
-
-NOTE: Be sure you have your environment variables set up. See `DB Setup` section.
-
-NestJS uses TypeORM to create, generate, run migrations.
-To apply pending migrations you just need to run:
-
-```bash
-npm run migrations
-```
-
-If you have modified/created any entity you can generate a migration from it:
-
-```bash
-npm run migrations:generate -- --n <MigrationName>
-```
-
-To revert the last applied migration:
-
-```bash
-npm run migrations:revert
-```
-
-## DB Setup
-
-You need to add some environment variables to your system in order to run migrations or the backend. For convenience, you can also create a `.env` file to represent your environment. Here's the format:
-
-```
-TYPEORM_CONNECTION=postgres
-TYPEORM_HOST=localhost
-TYPEORM_PORT=5432
-TYPEORM_USERNAME=postgres
-TYPEORM_PASSWORD=password
-TYPEORM_DATABASE=glee2
-TYPEORM_MIGRATIONS=./src/migrations/*.ts
-TYPEORM_ENTITIES=./src/modules/**/*.entity.ts
-```
-
-## Migrations for CI/CD Review Apps
-
-It would be best to spin up a database in RDS while we are spinning up a new environment in EB. BUT, it takes around 10 minutes to spin up a new DB in RDS. It's also more work to script the new db that we don't have time for. So, as a stop-gap, you can manually migrate a shared database ("dev") from the CI/CD screen in Gitlab. This will trigger a build step that runs "revert" and "run" to down and up the migrations. You must make sure that you have all the necessary db-related env vars in Gitlab so that this will work (see "DB Setup" section).
-
-## Authentication with Auth0
-
-Authentication has been applied to all endpoints, so it's not necessary to specify which endpoints require auth. For authentication to work, you will need some env vars, for example:
-
-```
-AUTH0_CLIENT_SECRET= <id placeholder, check trello card on OIW board in resources lane>
-AUTH0_CLIENT_ID= <id placeholder, check trello card on OIW board in resources lane>
-AUTH0_DOMAIN=glee2-dev.auth0.com
-AUTH0_AUDIENCE=http://localhost:3030
-```
-
-(These vars work for our `Acklen` tenant in Auth0 using the API called "testing".)
-
-To test the API with Postman, you will need a valid JWT encrypted with RS256 and the correct client secret (amongst other things). You can generate said JWT by hitting Auth0's OAuth endpoint like this:
-
-```
-curl --request POST \
-  --url https://acklen.auth0.com/oauth/token \
-  --header 'content-type: application/json' \
-  --data '{"client_id":"qrzt4jjhdmJHSdg5Ca6gVsdtY6x1xc2G","client_secret":"Xm6vhFnMv2BonJ8lhxsbCAZtIe5KjqqyXKNut5I5Spt4AQ3ms7mYTmwQ7JzIIwdt","audience":"http://localhost:3030","grant_type":"client_credentials"}'
-```
-
-(This only works with an "API" in Auth0. It will not work with an "Application" in Auth0 because they disable `client_credentials` grants by default and we have not found a way to enable that.)
-
-To switch your backend to use the "Application" in Auth0, you should simply change the clientId, clientSecret, and audience in your environment variables.
