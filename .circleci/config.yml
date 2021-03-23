@@ -1,5 +1,6 @@
 version: 2.1
-
+orbs:
+  discord: antonioned/discord@0.1.0
 commands:
   destroy-environment:
     description: Destroy backend and frontend cloudformation stacks given a workflow ID.
