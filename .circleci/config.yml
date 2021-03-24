@@ -167,6 +167,11 @@ jobs:
               --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
               --output text >> .circleci/ansible/inventory.txt
+      - run: 
+          name: installing which dependencies
+          command : |
+            apt-get install which
+            
       - persist_to_workspace:
           root: ~/
           paths:
