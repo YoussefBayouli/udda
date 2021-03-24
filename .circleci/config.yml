@@ -284,7 +284,7 @@ jobs:
       - revert_migration:
           workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
                     
-   deploy-backend:
+  deploy-backend:
     docker:
       - image: python:3.7-alpine3.11
     steps:
