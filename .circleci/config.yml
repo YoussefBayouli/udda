@@ -140,10 +140,7 @@ jobs:
     steps:
       - checkout
       - run: yum -y install tar gzip
-      - run: 
-          name: installing which dependencies
-          command : |
-            apt-get install which
+      - run: apt-get install which
       - run:
           name: Ensure backend infrastructure exist
           command: |
