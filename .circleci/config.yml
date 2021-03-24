@@ -186,7 +186,7 @@ jobs:
       - image: python:3.7-alpine3.11
     steps:
       - checkout
-      - run: yum -y install which
+      - run: pip install which
       - add_ssh_keys:
           fingerprints: ["b4:54:63:cc:a4:4f:1d:96:4e:be:18:1a:65:a7:80:1c"]
       - attach_workspace:
