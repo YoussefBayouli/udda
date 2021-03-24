@@ -140,7 +140,7 @@ jobs:
     steps:
       - checkout
       - run: yum -y install tar gzip
-      - run: apt-get install which
+      - run: yum -y install which
       - run:
           name: Ensure backend infrastructure exist
           command: |
