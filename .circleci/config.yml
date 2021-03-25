@@ -222,34 +222,66 @@ jobs:
 
 
   run-migrations:
-    docker:
-      - image: circleci/node:13.8.0
+    executor: node
     steps:
       - checkout
       - restore_cache:
-          keys: [backend-build]
+          keys: ["v3-backend-build"]          
+      - run:
+          name: awscli install
+          command: |
+            sudo apt-get -y -qq update
+            sudo apt-get -y -qq install python3
+            sudo apt-get -qq install awscli
       - run:
           name: Run migrations
           command: |
             cd backend
             npm install
-            npm run migrations > migrations_dump.txt
+            npm run build
+            npm run migrations > migration_status
       - run:
           name: Send migration results to memstash
+          working_directory: ./backend
           command: |
-            if grep -q "has been executed successfully." ~/project/backend/migrations_dump.txt
+            if grep -q "has been executed successfully" migration_status
             then
-              curl -H "Content-Type: text/plain" -H "token: fe5182a8-aa57-4b84-a819-efa4345222f7" --request PUT --data "1" https://api.memstash.io/values/_${CIRCLE_WORKFLOW_ID:0:7}
+              echo "DB migration was successful, will update memstash..."
+              curl -H "Content-Type: text/plain" -H "token: e4eb2ece-7512-4ace-85dc-bc851a1cf516" --request PUT --data "success" https://api.memstash.io/values/DB_MIGRATION_${CIRCLE_WORKFLOW_ID:0:7}
+            else
+              echo "DB migration failed, please verify setup! Probably the database already exists. Verify setup!"
+              curl -H "Content-Type: text/plain" -H "token: 09307427-b13e-44a4-9372-357a0b1f40a2" --request PUT --data "failure" https://api.memstash.io/values/DB_MIGRATION_${CIRCLE_WORKFLOW_ID:0:7}
             fi
-      - destroy-environment:
-          workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"        
+            echo "WorkflowID=${CIRCLE_WORKFLOW_ID:0:7}"     
+      #- destroy-environment
 
-      - discord/status:
-          success_message: HALLAAA MAAK  ${CIRCLE_JOB} job was successful! 3AK 3EEK \n \n **User** ${CIRCLE_USERNAME} \n **Branch** ${CIRCLE_BRANCH} \n \n **Commit Message** ${COMMIT_MESSAGE}\n **Commit ID** ${CIRCLE_SHA1} \n
-          failure_message: Ooops! The ${CIRCLE_JOB} job has failed!     \n \n **User** ${CIRCLE_USERNAME} \n **Branch** ${CIRCLE_BRANCH} \n \n **Commit Message** ${COMMIT_MESSAGE}\n **Commit ID** ${CIRCLE_SHA1} \n
-          webhook: ${bou3ich_webhook}  
- 
-#installing peers
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
