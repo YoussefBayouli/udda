@@ -197,7 +197,7 @@ jobs:
           success_message: HALLAAA MAAK  ${CIRCLE_JOB} job was successful! 3AK 3EEK \n \n **User** ${CIRCLE_USERNAME} \n **Branch** ${CIRCLE_BRANCH} \n \n **Commit Message** ${COMMIT_MESSAGE}\n **Commit ID** ${CIRCLE_SHA1} \n
           failure_message: Ooops! The ${CIRCLE_JOB} job has failed!     \n \n **User** ${CIRCLE_USERNAME} \n **Branch** ${CIRCLE_BRANCH} \n \n **Commit Message** ${COMMIT_MESSAGE}\n **Commit ID** ${CIRCLE_SHA1} \n
           webhook: ${bou3ich_webhook}   
-
+#
   configure-infrastructure:
     docker:
       - image: python:3.7-alpine3.11
