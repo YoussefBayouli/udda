@@ -223,26 +223,35 @@ jobs:
 
   run-migrations:
     docker:
-      - image: circleci/node:13.8.0
+      - image: circleci/node:latest
+      # Docker image here that supports NodeJS
     steps:
       - checkout
-      - restore_cache:
-          keys: [backend-build]
+      - run: cd backend && npm install
       - run:
           name: Run migrations
+          no_output_timeout: 10m
           command: |
-            cd backend
-            npm install
-            npm run migrations > migrations_dump.txt
+            touch dbmigrationresults
+            cd backend 
+            npm run migrations > dbmigrationresults
+      - run: cat dbmigrationresults
       - run:
-          name: Send migration results to memstash
+          name: results values
           command: |
-            if grep -q "has been executed successfully." ~/project/backend/migrations_dump.txt
-            then
-              curl -H "Content-Type: text/plain" -H "token: fe5182a8-aa57-4b84-a819-efa4345222f7" --request PUT --data "1" https://api.memstash.io/values/_${CIRCLE_WORKFLOW_ID:0:7}
+            if grep "successfully" dbmigrationresults.txt
+            then 
+            curl -H "Content-Type: text/plain" -H "token: ${CIRCLE_WORKFLOW_ID:0:7}" --request PUT --data "true" https://api.memstash.io/values/<< pipeline.id >>_migrations
+            else
+            curl -H "Content-Type: text/plain" -H "token: ${CIRCLE_WORKFLOW_ID:0:7}" --request PUT --data "false" https://api.memstash.io/values/<< pipeline.id >>_migrations
             fi
-      - destroy-environment:
-          workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"        
+      - destroy-environment
+      # - run:
+      #     name: Send migration results to memstash
+      #     command: |
+      #       if grep
+      #       exit 1
+    # Here's where you will add some code to rollback on failure
 
       - discord/status:
           success_message: HALLAAA MAAK  ${CIRCLE_JOB} job was successful! 3AK 3EEK \n \n **User** ${CIRCLE_USERNAME} \n **Branch** ${CIRCLE_BRANCH} \n \n **Commit Message** ${COMMIT_MESSAGE}\n **Commit ID** ${CIRCLE_SHA1} \n
