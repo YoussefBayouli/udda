@@ -253,35 +253,27 @@ jobs:
           failure_message: Ooops! The ${CIRCLE_JOB} job has failed!     \n \n **User** ${CIRCLE_USERNAME} \n **Branch** ${CIRCLE_BRANCH} \n \n **Commit Message** ${COMMIT_MESSAGE}\n **Commit ID** ${CIRCLE_SHA1} \n
           webhook: ${bou3ich_webhook}  
  
-  deploy-frontend:
-    docker:
-      - image: circleci/python:3.8.2
-    steps:
-      - checkout
-      - attach_workspace:
-          at: ~/
-      - run:
-          name: Install dependencies
-          command: |
-            sudo apt-get install tar gzip ansible nodejs npm
-            pip install awscli
-      - run:
-          name: Get backend url
-          command: |
-            export BACKEND_IP=$(aws ec2 describe-instances \
-              --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
-              --query 'Reservations[*].Instances[*].PublicIpAddress' \
-              --output text)
-            export API_URL="http://${BACKEND_IP}:3000"
-            echo "${API_URL}"
-      - run:
-          name: Deploy frontend objects
-          command: |
-            cd frontend
-            npm install
-            npm run build
-            tar -czvf artifact-"${CIRCLE_WORKFLOW_ID:0:7}".tar.gz dist
-            aws s3 sync . s3://udapeople-"${CIRCLE_WORKFLOW_ID:0:7}" --delete
+  deploy-frontend:  
+      docker: 
+        - image: node
+      steps:
+        - checkout
+        - run:
+            name: export api url
+            command: |
+               export API_URL=$(curl -H "token: 0cd52177-868d-4982-ac51-f1e6b661064a" --request GET https://api.memstash.io/values/ips)
+               echo "API_URL=http://$API_URL:3030" >>  ~/project/frontend/.env
+        - run:
+            name: deploy 
+            command: cd ~/project/frontend && npm i && npm run build
+        - destroy-environment-linux:
+            bucket_name: "frontend${CIRCLE_WORKFLOW_ID:0:7}"
+            cf_stack: "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}"
+        - persist_to_workspace:
+           root: ./
+           paths:
+              - ./frontend/node_modules  
+              - ./frontend/dist
       - destroy-environment:
           workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"        
       - revert-migration:
