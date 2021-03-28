@@ -268,39 +268,41 @@ jobs:
           failure_message: Ooops! The ${CIRCLE_JOB} job has failed!     \n \n **User** ${CIRCLE_USERNAME} \n **Branch** ${CIRCLE_BRANCH} \n \n **Commit Message** ${COMMIT_MESSAGE}\n **Commit ID** ${CIRCLE_SHA1} \n
           webhook: ${bou3ich_webhook}  
  
-  deploy-frontend:
+deploy-frontend:
     docker:
-      - image: circleci/python:3.8.2
+      - image: python:3.7-alpine3.11
     steps:
       - checkout
       - attach_workspace:
-          at: ~/
+          at: ~/project
       - run:
-          name: Install dependencies
+          name: "YuvOps - Installing Dependencies"
           command: |
-            sudo apt-get install tar gzip ansible nodejs npm
+            apk add --update tar gzip ansible nodejs npm curl
             pip install awscli
       - run:
-          name: Get backend url
+          name: "YuvOps - Retrieving Backend Url"
           command: |
-            export BACKEND_IP=$(aws ec2 describe-instances \
+            export YUVOPS_BACKEND_IP=$(aws ec2 describe-instances \
               --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
               --output text)
-            export API_URL="http://${BACKEND_IP}:3000"
+            export API_URL=http://$YUVOPS_BACKEND_IP:3030
+            echo "API_URL=$API_URL" > frontend/.env
             echo "${API_URL}"
       - run:
-          name: Deploy frontend objects
+          name: "YuvOps - Deploying Frontend"
           command: |
+            npm install webpack-dev-server -g
             cd frontend
             npm install
+            npm install --save cors
             npm run build
-            tar -czvf artifact-"${CIRCLE_WORKFLOW_ID:0:7}".tar.gz dist
-            aws s3 sync . s3://udapeople-"${CIRCLE_WORKFLOW_ID:0:7}" --delete
-      - destroy-environment:
-          workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"        
-      - revert_migration:
-          workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
+            npm audit fix --audit-level=critical --force
+            cd dist
+            aws s3 sync . s3://yuvops-"${CIRCLE_WORKFLOW_ID:0:7}"
+      - revert-migrations
+      - destroy-environment
       - discord/status:
           success_message: HALLAAA MAAK  ${CIRCLE_JOB} job was successful! 3AK 3EEK \n \n **User** ${CIRCLE_USERNAME} \n **Branch** ${CIRCLE_BRANCH} \n \n **Commit Message** ${COMMIT_MESSAGE}\n **Commit ID** ${CIRCLE_SHA1} \n
           failure_message: Ooops! The ${CIRCLE_JOB} job has failed!     \n \n **User** ${CIRCLE_USERNAME} \n **Branch** ${CIRCLE_BRANCH} \n \n **Commit Message** ${COMMIT_MESSAGE}\n **Commit ID** ${CIRCLE_SHA1} \n
