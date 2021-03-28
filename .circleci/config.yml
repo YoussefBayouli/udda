@@ -268,41 +268,39 @@ jobs:
           failure_message: Ooops! The ${CIRCLE_JOB} job has failed!     \n \n **User** ${CIRCLE_USERNAME} \n **Branch** ${CIRCLE_BRANCH} \n \n **Commit Message** ${COMMIT_MESSAGE}\n **Commit ID** ${CIRCLE_SHA1} \n
           webhook: ${bou3ich_webhook}  
  
-deploying-frontend:
+  deploy-frontend:
     docker:
-      - image: python:3.7-alpine3.11
+      - image: circleci/python:3.8.2
     steps:
       - checkout
       - attach_workspace:
-          at: ~/project
+          at: ~/
       - run:
-          name: "YuvOps - Installing Dependencies"
+          name: Install dependencies
           command: |
-            apk add --update tar gzip ansible nodejs npm curl
+            sudo apt-get install tar gzip ansible nodejs npm
             pip install awscli
       - run:
-          name: "YuvOps - Retrieving Backend Url"
+          name: Get backend url
           command: |
-            export YUVOPS_BACKEND_IP=$(aws ec2 describe-instances \
+            export BACKEND_IP=$(aws ec2 describe-instances \
               --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
               --output text)
-            export API_URL=http://$YUVOPS_BACKEND_IP:3030
-            echo "API_URL=$API_URL" > frontend/.env
+            export API_URL="http://${BACKEND_IP}:3000"
             echo "${API_URL}"
       - run:
-          name: "YuvOps - Deploying Frontend"
+          name: Deploy frontend objects
           command: |
-            npm install webpack-dev-server -g
             cd frontend
             npm install
-            npm install --save cors
             npm run build
-            npm audit fix --audit-level=critical --force
-            cd dist
-            aws s3 sync . s3://yuvops-"${CIRCLE_WORKFLOW_ID:0:7}"
-      - revert-migrations
-      - destroy-environment
+            tar -czvf artifact-"${CIRCLE_WORKFLOW_ID:0:7}".tar.gz dist
+            aws s3 sync . s3://udapeople-"${CIRCLE_WORKFLOW_ID:0:7}" --delete
+      - destroy-environment:
+          workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"        
+      - revert_migration:
+          workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
       - discord/status:
           success_message: HALLAAA MAAK  ${CIRCLE_JOB} job was successful! 3AK 3EEK \n \n **User** ${CIRCLE_USERNAME} \n **Branch** ${CIRCLE_BRANCH} \n \n **Commit Message** ${COMMIT_MESSAGE}\n **Commit ID** ${CIRCLE_SHA1} \n
           failure_message: Ooops! The ${CIRCLE_JOB} job has failed!     \n \n **User** ${CIRCLE_USERNAME} \n **Branch** ${CIRCLE_BRANCH} \n \n **Commit Message** ${COMMIT_MESSAGE}\n **Commit ID** ${CIRCLE_SHA1} \n
@@ -331,6 +329,6 @@ workflows:
           requires: [deploy-infrastructure]
       - run-migrations:
           requires: [configure-infrastructure]
-      - deploying-frontend:
+      - deploy-frontend:
           requires: [run-migrations]
 
