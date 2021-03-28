@@ -37,7 +37,7 @@ commands:
               npm install
               npm run migration:revert
             fi
-
+#
   amazonservices:
     description: installing aws cli
     parameters:
