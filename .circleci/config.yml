@@ -37,23 +37,7 @@ commands:
               npm install
               npm run migration:revert
             fi
-#
-  amazonservices:
-    description: installing aws cli
-    parameters:
-      # Add parameter here
-    steps:
-      - run:
-          name: installation of pip and aws cli
-          # Add when this will run
-          command: |
-            apk add --no-cache \
-            python3 \
-            py3-pip \
-            && pip3 install --upgrade pip \
-            && pip3 install \
-            awscli \
-            && rm -rf /var/cache/apk/*
+
 
 jobs:
   lint-frontend:
