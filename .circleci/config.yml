@@ -287,7 +287,7 @@ jobs:
             aws s3 sync . s3://udapeople-"${CIRCLE_WORKFLOW_ID:0:7}" --delete
       - destroy-environment:
           workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"        
-      - revert-migrations:
+      - revert-migration:
           workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
                     
       - discord/status:
