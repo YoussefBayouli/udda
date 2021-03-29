@@ -255,7 +255,7 @@ jobs:
  
   deploy-frontend:
     docker:
-      - image: circleci/python:3.8.2
+      - image: amazon/aws-cli
     steps:
       - checkout
       - attach_workspace:
