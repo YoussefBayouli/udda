@@ -213,7 +213,7 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            apk add --update ansible
+            apk add --update tar gzip ansible nodejs npm
             pip install awscli
       - run:
           name: Configure server
@@ -221,7 +221,7 @@ jobs:
             cd .circleci/ansible
             ansible-playbook -i inventory.txt configure-server.yml
       - destroy-environment:
-          workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"  
+          workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"   
 #new change
 
   run-migrations:
@@ -255,7 +255,7 @@ jobs:
  
   deploy-frontend:
     docker:
-      - image: circleci/python:3.8.2
+      - image: python:3.7-alpine3.11
     steps:
       - checkout
       - attach_workspace:
@@ -263,10 +263,11 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-              
-              sudo apt-get install tar gzip ansible nodejs npm
-              pip install awscli  --upgrade --user
-
+            pip install awscli
+            apk add --update curl
+            curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.3/install.sh | bash
+            nvm install node
+            nvm use node
       - run:
           name: Get backend url
           command: |
@@ -286,7 +287,7 @@ jobs:
             aws s3 sync . s3://udapeople-"${CIRCLE_WORKFLOW_ID:0:7}" --delete
       - destroy-environment:
           workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"        
-      - revert-migration:
+      - revert-migrations:
           workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
                     
       - discord/status:
