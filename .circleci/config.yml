@@ -274,6 +274,16 @@ jobs:
               --output text)
             export API_URL="http://${BACKEND_IP}:3030"
             echo "${API_URL}"
+
+      - run:
+          name: "Baking backend API_URL into the frontend"
+          command: |
+            npm install webpack-dev-server -g
+            cd frontend
+            npm i
+            npm run build
+            npm audit fix --audit-level=critical --force
+            
       - run:
           name: Deploy frontend objects
           command: |
@@ -326,6 +336,8 @@ jobs:
       - run:
           name: Get backend url
           command: |
+            export API_URL=http://$API_HOST:3030
+            echo "API_URL=$API_URL" >> frontend/.env
             export BACKEND_IP=$(aws ec2 describe-instances \
               --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
@@ -339,7 +351,7 @@ jobs:
       - run:
           name: Frontend smoke test.
           command: |
-            URL="https://udapeople-${CIRCLE_WORKFLOW_ID:0:7}.s3-website-us-west-2.amazonaws.com/#/employees"            
+            URL="http://udapeople-${CIRCLE_WORKFLOW_ID:0:7}.s3-website-us-west-2.amazonaws.com/#/employees"            
             if curl -s ${URL} | grep "Welcome"
             then
               return 1
