@@ -332,24 +332,25 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            apk add --update curl
+            apk add --update curl nodejs npm
             pip install awscli
       - run:
           name: Get backend url
           command: |
-            BACKEND_URL=$(aws ec2 describe-instances \
-            --filters "Name=tag:Name, Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
-            --query 'Reservations[*].Instances[*].PublicDnsName' \
-            --output text)
-            curl "http://${BACKEND_URL}:3030/api/status"
+            export BACKEND_IP=$(aws ec2 describe-instances \
+              --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
+              --query 'Reservations[*].Instances[*].PublicIpAddress' \
+              --output text)
+            export API_URL="http://${BACKEND_IP}:3030"
+            echo "${API_URL}"
       - run:
           name: Backend smoke test.
           command: |
-            curl "${API_URL}/api/status"
+            curl "http://${API_URL}:3030/api/status"
       - run:
           name: Frontend smoke test.
           command: |
-            URL="http://udapeople-${CIRCLE_WORKFLOW_ID:0:7}.s3-website-us-west-2.amazonaws.com/#/employees"            
+            URL="http://udapeople-${CIRCLE_WORKFLOW_ID:0:7}.s3-website-us-east-1.amazonaws.com/#/employees"            
             if curl -s ${URL} | grep "Welcome"
             then
               return 1
@@ -358,7 +359,7 @@ jobs:
             fi
       - destroy-environment:
           workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"        
-      - revert-migration:
+      - revert_migration:
           workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
 
 
