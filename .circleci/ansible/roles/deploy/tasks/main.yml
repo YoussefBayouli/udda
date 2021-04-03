@@ -44,7 +44,3 @@
   args:
     chdir: /root/backend/dist
 
-
-  shell: |
-    npm install
-    pm2 start npm -- start
