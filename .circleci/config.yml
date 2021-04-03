@@ -356,7 +356,7 @@ jobs:
             echo "${API_URL}"
             echo "${BACKEND_IP}"
             curl "${API_URL}/api/status"
-
+#
       - run:
           name: Backend smoke test.
           command: |
