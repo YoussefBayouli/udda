@@ -221,15 +221,7 @@ jobs:
             cd .circleci/ansible
             ansible-playbook -i inventory.txt configure-server.yml
 
-      - run:
-          name: "Get the IP Address of the Backend EC2 instance and create inventory"
-          command: |
-            echo -e "[web]\n" > ./.circleci/ansible/inventory
-            aws ec2 describe-instances \
-            --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
-            --query 'Reservations[*].Instances[*].PublicIpAddress' \
-            --output text >> ./.circleci/ansible/inventory
-            cat ./.circleci/ansible/inventory
+
       - destroy-environment:
           workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"   
 #new change
@@ -323,11 +315,11 @@ jobs:
           name: Add back-end ip to ansible inventory
           command: |
             # Your code here
-            echo "[web]" > ~/project/.circleci/ansible/inventory.txt
+            echo "[web]" > ~/udda/.circleci/ansible/inventory.txt
             aws ec2 describe-instances \
             --query 'Reservations[*].Instances[*].PublicIpAddress' \
             --filters Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID} \
-            --output text >> ~/project/.circleci/ansible/inventory.txt
+            --output text >> ~/udda/.circleci/ansible/inventory.txt
       - run:
           name: Deploy backend
           command: |
@@ -362,6 +354,7 @@ jobs:
               --output text)
             export API_URL="http://${BACKEND_IP}:3030"
             echo "${API_URL}"
+            echo "${BACKEND_IP}"
             curl "http://${API_URL}:3030/api/status"
 
       - run:
