@@ -1,46 +1,38 @@
 ---
-
-
-- name: "extract artifact."
-  unarchive:
-    src: /root/project/artifact.tar.gz
-    dest: /home/ubuntu/
-
-- name: "upgrade packages."
-  become: true
+- name: "Updating Packages"
+  become: yes
   apt:
-    upgrade: "yes"
-- name: "install dependencies."
-  become: true
-  apt:
-    name: ["nodejs", "npm"]
     update_cache: yes
-- name: "install pm2"
+
+- name: "Upgrading Packages"
+  become: yes
+  apt:
+    upgrade: yes
+
+- name: "Installing Dependencies"
   become: true
-  npm:
-    name: pm2
-    global: yes
-    production: yes
-    state: present
-- name: "copy backend file"
+  apt:
+    name: ["nodejs", "npm", "tar"]
+    state: latest
+    update_cache: yes
+
+- name: "Copying Backend Folder"
   become: true
   copy:
     src: /root/project/backend
-    dest: /root
-    force: no
-- name: "install npm packages"
-  become: true
-  command: npm install
-  args:
-    chdir: /root/backend
-- name: "compile npm packages"
-  become: true
-  command: npm run build
-  args:
-    chdir: /root/backend
-- name: "start server"
-  become: true
-  command: pm2 start npm -- run start
-  args:
-    chdir: /root/backend/dist
+    dest: /home/ubuntu
 
+- name: "Installing Node Dependencies"
+  shell: |
+    cd /home/ubuntu/backend
+    npm install
+- name: "Building Backend Service"
+  shell: |
+    cd /home/ubuntu/backend
+    npm run build
+    npm run prestart:prod
+- name: "Running Backend Service with PM2"
+  shell: |
+    cd /home/ubuntu/backend
+    pm2 start npm --no-automation --name "backend" -- run start
+    pm2 ls
