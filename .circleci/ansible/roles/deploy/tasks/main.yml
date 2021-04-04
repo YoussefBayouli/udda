@@ -1,38 +1,40 @@
----
-- name: "upgrade packages."
+- name: "Create app folder"
   become: true
-  apt:
-    upgrade: "yes"
-- name: "install dependencies."
+  file:
+    path: /home/ubuntu/app
+    state: directory
+
+- name: "Copy backend build to server"
   become: true
-  apt:
-    name: ["nodejs", "npm"]
-    update_cache: yes
-- name: "install pm2"
-  become: true
-  npm:
-    name: pm2
-    global: yes
-    production: yes
-    state: present
-- name: "copy backend file"
+  unarchive:
+    src: /tmp/workspace/backend.tar.gz
+    dest: /home/ubuntu/app/
+    owner: ubuntu
+
+- name: "Copy package.json to server"
   become: true
   copy:
-    src: /root/project/backend
-    dest: /root
-    force: no
-- name: "install npm packages"
-  become: true
-  command: npm install
+    src: /tmp/workspace/package.json
+    dest: /home/ubuntu/app/
+    owner: ubuntu
+
+- name: "Install backend dependencies using NPM"
+  command: npm install --production
   args:
-    chdir: /root/backend
-- name: "compile npm packages"
-  become: true
-  command: npm run build
+    chdir: /home/ubuntu/app
+
+- name: "Start backend with pm2"
+  shell: |
+    export TYPEORM_HOST="{{ lookup('env', 'TYPEORM_HOST') }}"
+    export TYPEORM_ENTITIES="{{ lookup('env', 'TYPEORM_ENTITIES') }}"
+    export TYPEORM_USERNAME="{{ lookup('env', 'TYPEORM_USERNAME') }}"
+    export TYPEORM_PASSWORD="{{ lookup('env', 'TYPEORM_PASSWORD') }}"
+    export TYPEORM_DATABASE="{{ lookup('env', 'TYPEORM_DATABASE') }}"
+    pm2 start main.js --name udapeople-backend
   args:
-    chdir: /root/backend
-- name: "start server"
-  become: true
-  command: pm2 start npm -- run start
-  args:
-    chdir: /root/backend/dist
+    chdir: /home/ubuntu/app
+
+- name: "Set pm2 start as service"
+  become: yes
+  shell: |
+    env PATH=$PATH:/usr/local/bin pm2 startup -u ubuntu
