@@ -316,7 +316,7 @@ jobs:
           command: |
             apk add --update tar gzip ansible curl
             pip install awscli
-
+#
       - run:
           name: Deploy backend
           command: |
