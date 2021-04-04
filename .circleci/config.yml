@@ -208,6 +208,18 @@ jobs:
           command: |
             apk add --update ansible
             pip install awscli
+
+      - run:
+          name: Add back-end ip to ansible inventory
+          command: |
+
+            echo [web] > ~/project/.circleci/ansible/inventory.txt
+            aws ec2 describe-instances \
+            --query 'Reservations[*].Instances[*].PublicIpAddress' \
+            --filters Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID} \
+            --output text >> ~/project/.circleci/ansible/inventory.txt
+            cat inventory.txt
+            
       - run:
           name: Configure server
           command: |
@@ -304,16 +316,7 @@ jobs:
           command: |
             apk add --update tar gzip ansible curl
             pip install awscli
-      - run:
-          name: Add back-end ip to ansible inventory
-          command: |
 
-            echo [web] > ~/project/.circleci/ansible/inventory.txt
-            aws ec2 describe-instances \
-            --query 'Reservations[*].Instances[*].PublicIpAddress' \
-            --filters Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID} \
-            --output text >> ~/project/.circleci/ansible/inventory.txt
-            cat inventory.txt
       - run:
           name: Deploy backend
           command: |
