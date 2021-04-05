@@ -445,7 +445,7 @@ jobs:
               --stack-name circleci-stack \
               --template-file .circleci/files/cloudfront.yml \
               --region us-west-2 \
-              --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID}"
+              --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID:0:7}"
       
             echo Delete old stacks/resources
             if [[ "${STACKS[@]}" =~ "${OldWorkflowId}" ]]
