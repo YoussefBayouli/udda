@@ -428,6 +428,52 @@ jobs:
       - revert-migration:
           workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
 
+cloudfront-update:
+    docker:
+      - image: amazon/aws-cli
+    steps:
+      - checkout
+      - run:
+          name: Update cloudfront distribution
+          command: |    
+            OldWorkflowId=$(aws cloudformation list-exports --query "Exports[?Name=='WorkflowID'].Value" --output text)
+            STACKS=$(aws cloudformation list-stacks --query "StackSummaries[*].StackName" --stack-status-filter CREATE_COMPLETE --output text)
+            echo OldWorkflowId: ${OldWorkflowId}
+            echo STACKS: ${STACKS}
+            echo Update CloudFront                  
+            aws cloudformation deploy \
+              --stack-name circleci-stack \
+              --template-file .circleci/files/cloudfront.yml \
+              --region us-west-2 \
+              --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID}"
+      
+            echo Delete old stacks/resources
+            if [[ "${STACKS[@]}" =~ "${OldWorkflowId}" ]]
+            then              
+              aws s3 rb s3://udapeople-${OldWorkflowId} --force              
+              aws cloudformation delete-stack --stack-name "n-udacity-backend-${OldWorkflowID}" --region us-west-2"              
+              aws cloudformation delete-stack --stack-name "n-udacity-frontend-${OldWorkflowID}" --region us-west-2"
+            fi
+      - destroy-environment:
+          workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"        
+      - revert-migration:
+          workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
+    
+  cloudfront-deploy:
+    docker:
+      - image: amazon/aws-cli
+    steps:
+      - checkout
+      - run:
+          name: deploy cloudfront distribution
+          command: |                
+            aws cloudformation deploy \
+              --stack-name circleci-stack \
+              --template-file .circleci/files/cloudfront.yml \
+              --region us-west-2 \
+              --parameter-overrides WorkflowID="EDREUGJUWFT59"
+
+
 
 #
 #
@@ -459,5 +505,9 @@ workflows:
           requires: [run-migrations]
       - smoke-test:
           requires: [deploy-backend, deploy-frontend]
+      - cloudfront-update:
+          requires: [smoke-test]
+      - cleanup:
+          requires: [cloudfront-update] 
 
 
