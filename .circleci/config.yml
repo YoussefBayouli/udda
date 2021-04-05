@@ -181,8 +181,15 @@ jobs:
               --stack-name "udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}" \
               --tags project=udapeople
+      - run:
+          name: Add backend ip to ansible inventory
+          command: |
+            aws ec2 describe-instances \
+              --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
+              --query 'Reservations[*].Instances[*].PublicIpAddress' \
+              --output text >> .circleci/ansible/inventory.txt
 
-#
+
       - persist_to_workspace:
           root: ~/
           paths:
@@ -208,16 +215,11 @@ jobs:
           command: |
             apk add --update ansible
             pip install awscli
-
-
-
       - run:
           name: Configure server
           command: |
             cd .circleci/ansible
             ansible-playbook -i inventory.txt configure-server.yml
-
-
       - destroy-environment:
           workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"   
 #new change
@@ -250,7 +252,7 @@ jobs:
           success_message: HALLAAA MAAK  ${CIRCLE_JOB} job was successful! 3AK 3EEK \n \n **User** ${CIRCLE_USERNAME} \n **Branch** ${CIRCLE_BRANCH} \n \n **Commit Message** ${COMMIT_MESSAGE}\n **Commit ID** ${CIRCLE_SHA1} \n
           failure_message: Ooops! The ${CIRCLE_JOB} job has failed!     \n \n **User** ${CIRCLE_USERNAME} \n **Branch** ${CIRCLE_BRANCH} \n \n **Commit Message** ${COMMIT_MESSAGE}\n **Commit ID** ${CIRCLE_SHA1} \n
           webhook: ${bou3ich_webhook}  
- #
+ 
   deploy-frontend:
     docker:
       - image: python:3.7-alpine3.11
@@ -307,7 +309,6 @@ jobs:
           command: |
             apk add --update tar gzip ansible curl
             pip install awscli
-#
       - run:
           name: Deploy backend
           command: |
@@ -315,11 +316,12 @@ jobs:
             cd .circleci/ansible
             cat inventory.txt
             ansible-playbook -i inventory.txt deploy-backend.yml
-      - destroy-environment:
-           workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"        
-      - revert-migration:
-           workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
+      # - destroy-environment:
+      #     workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"        
+      # - revert-migrations:
+      #     workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
 
+                    
   smoke-test:
     docker:
       - image: python:3.7-alpine3.11
@@ -330,7 +332,7 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            apk add --update curl nodejs npm
+            apk add --update curl
             pip install awscli
       - run:
           name: Get backend url
@@ -341,13 +343,11 @@ jobs:
               --output text)
             export API_URL="http://${BACKEND_IP}:3030"
             echo "${API_URL}"
-            echo "${BACKEND_IP}"
             curl "${API_URL}/api/status"
-#
       - run:
           name: Backend smoke test.
           command: |
-            curl "http://${API_URL}:3030/api/status"
+            curl "${API_URL}/api/status"
       - run:
           name: Frontend smoke test.
           command: |
@@ -363,9 +363,9 @@ jobs:
       - revert-migration:
           workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
 
+
 #
-
-
+#
 workflows:
   default:
     jobs:
