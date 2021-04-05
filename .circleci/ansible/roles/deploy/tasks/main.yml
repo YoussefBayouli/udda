@@ -15,12 +15,12 @@
     production: yes
     state: present
 
-- name: "copy backend file"
-   become: true
-   copy:
-     src: /home/circleci/project/backend
-     dest: /root/
-     force: no
+#- name: "copy backend file"
+ #  become: true
+  # copy:
+   #  src: /home/circleci/project/backend
+    # dest: /root/
+     #force: no
 
 - name: Copy backend files
    become: true
