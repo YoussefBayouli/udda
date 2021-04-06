@@ -7,7 +7,7 @@ UdaPeople product, is a revolutionary concept in Human Resources which promises 
 
 In this project , i was assigned to :
 
-* To Achieve, Build, and Deploy Automation for Cloud-Based Software Products
+*To Achieve, Build, and Deploy Automation for Cloud-Based Software Products
 
 *Utilize Deployment Strategies to design and build CI/CD pipelines that support Continuous Delivery processes.
 
