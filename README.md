@@ -17,7 +17,7 @@ In this project , i was assigned to :
 
 
 
-At the very end of the pipeline, i had to make a switch from the old infrastructure to the new as i learned about with the Blue Green Deployment strategy. I used CloudFormation and CloudFront to accomplish this.
+At the very end of the pipeline, i made a switch from the old infrastructure to the new as i learned about with the Blue Green Deployment strategy. I used CloudFormation and CloudFront to accomplish this.
 
 
 
