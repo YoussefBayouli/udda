@@ -38,6 +38,8 @@ commands:
               npm run migration:revert
             fi
 
+      #dfdfdf
+
 jobs:
   lint-frontend:
     docker:
