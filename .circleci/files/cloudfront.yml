@@ -18,7 +18,7 @@ Resources:
     Properties:
       DistributionConfig:
         Origins:
-          - DomainName: !Sub "http://udapeople-5c3e210.s3-website-us-west-2.amazonaws.com"
+          - DomainName: !Sub "http://udapeople-k1j287d.s3-website-us-west-2.amazonaws.com"
             Id: webpage
             S3OriginConfig:
               OriginAccessIdentity: !Sub "origin-access-identity/cloudfront/${CloudFrontOriginAccessIdentity}"
