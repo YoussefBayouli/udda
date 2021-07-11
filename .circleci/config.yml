@@ -447,13 +447,13 @@ jobs:
               --region us-west-2 \
               --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID:0:7}"
 
-            echo Delete old stacks/resources
-            if [[ "${STACKS[@]}" =~ "${OldWorkflowId}" ]]
-            then              
-              aws s3 rb s3://udapeople-${OldWorkflowId} --force              
-              aws cloudformation delete-stack --stack-name "n-udacity-backend-${OldWorkflowID}" --region us-west-2"              
-              aws cloudformation delete-stack --stack-name "n-udacity-frontend-${OldWorkflowID}" --region us-west-2"
-            fi
+          # echo Delete old stacks/resources
+          #if [[ "${STACKS[@]}" =~ "${OldWorkflowId}" ]]
+          #then
+          # aws s3 rb s3://udapeople-${OldWorkflowId} --force
+          #aws cloudformation delete-stack --stack-name "n-udacity-backend-${OldWorkflowID}" --region us-west-2"
+          #aws cloudformation delete-stack --stack-name "n-udacity-frontend-${OldWorkflowID}" --region us-west-2"
+          #fi
       - destroy-environment:
           workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
       - revert-migration:
