@@ -1,25 +1,21 @@
 ## Give your Application Auto-Deploy Superpowers
-About the project : 
 
-UdaPeople product, is a revolutionary concept in Human Resources which promises to help small businesses care better for their most valuable resource: their people.  
+In this project, you will prove your mastery of the following learning objectives:
 
-
-
-In this project , i was assigned to :
-
-*To Achieve, Build, and Deploy Automation for Cloud-Based Software Products
-
-*Utilize Deployment Strategies to design and build CI/CD pipelines that support Continuous Delivery processes.
-
-*Utilize a configuration management tool to accomplish deployment to cloud-based servers.
-
-*Surface critical server errors for diagnosis using centralized structured logging.
+- Explain the fundamentals and benefits of CI/CD to achieve, build, and deploy automation for cloud-based software products.
+- Utilize Deployment Strategies to design and build CI/CD pipelines that support Continuous Delivery processes.
+- Utilize a configuration management tool to accomplish deployment to cloud-based servers.
+- Surface critical server errors for diagnosis using centralized structured logging.
 
 
 
-At the very end of the pipeline, i made a switch from the old infrastructure to the new as i learned about with the Blue Green Deployment strategy. I used CloudFormation and CloudFront to accomplish this.
+### Instructions
 
-
+* [Selling CI/CD](instructions/0-selling-cicd.md)
+* [Getting Started](instructions/1-getting-started.md)
+* [Deploying Working, Trustworthy Software](instructions/2-deploying-trustworthy-code.md)
+* [Configuration Management](instructions/3-configuration-management.md)
+* [Turn Errors into Sirens](instructions/4-turn-errors-into-sirens.md)
 
 
 
