@@ -1,32 +1,35 @@
 import { EmployeeRepository } from '../../repositories/employees.repository';
-import { EmployeeCompanyEmailUpdater } from './employee-company-email-updater.handler';
-import { UpdateEmployeeCompanyEmail } from '../update-employee-company-email.command';
+import { ActivateEmployee } from '../activate-employee.command';
+import { EmployeeActivator } from './employee-activator.handler';
 
-describe('Employee Company Email Updater', () => {
-  describe('when an user updates an employee company email', () => {
+describe('Employee Remover', () => {
+  describe('when a user activates an employee', () => {
     const MockEmployeeRepository = jest.fn<EmployeeRepository, []>(
       () =>
         ({
-          save: jest.fn(),
           findById: jest.fn().mockResolvedValue([]),
+          save: jest.fn(),
         } as any),
     );
 
     const employeeRepository = new MockEmployeeRepository();
 
-    it('should get and employee and add it to the repository', async () => {
+    it('should activate the employee from the repository', async () => {
       // Arrange
-      const handler = new EmployeeCompanyEmailUpdater(employeeRepository);
+      const handler = new EmployeeActivator(employeeRepository);
 
       const params = {
-        employeeId: 100,
-        companyEmail: 'jimmyramos@acklenavenue.com',
+        employeeId: 100, //change this to 100 to make the test pass
+        isActive: false,
       };
 
-      const updateEmployee = new UpdateEmployeeCompanyEmail(params.employeeId, params.companyEmail);
+      const activateEmployeeCommand = new ActivateEmployee(
+        params.employeeId,
+        params.isActive,
+      );
 
       // Act
-      await handler.handle(updateEmployee);
+      await handler.handle(activateEmployeeCommand);
 
       // Assert
       expect(employeeRepository.findById).toBeCalledWith(100);
