@@ -274,38 +274,48 @@ jobs:
   #
   deploy-frontend:
     docker:
-      - image: travnels/circleci-nodejs-awscli:latest
+      - image: amazon/aws-cli
     steps:
       - checkout
-      - attach_workspace:
-          at: ~/
       - run:
           name: Install dependencies
           command: |
-            cd frontend
-            sudo npm install webpack-dev-server -g
-            sudo npm install
+            yum -y install tar gzip
+            curl -sL https://rpm.nodesource.com/setup_lts.x | bash -
+            yum -y install nodejs
       - run:
           name: Get backend url
           command: |
-            export BACKEND_IP=$(sed -n 2p .circleci/ansible/inventory.txt)
-            export API_URL="http://${BACKEND_IP}:3030"
-            echo ENVIRONMENT=production > "frontend/.env"
-            echo NODE_ENV=production >> "frontend/.env"
-            echo API_URL=$API_URL >> "frontend/.env"
-            echo $API_URL
+            aws ec2 describe-instances \
+            \
+                  --query 'Reservations[*].Instances[*].PublicIpAddress' \
+                  --filters "Name=tag:project,Values=udapeople" \
+                  --output text > IP.txt
+
       - run:
-          name: Build frontend
+          name: export backend url
           command: |
-            cd frontend
-            ls -la
-            cat .env
-            npm run build
+            BACKEND_IP=$(cat IP.txt)
+            echo "$BACKEND_IP"           
+            export API_URL="http://${BACKEND_IP}:3030"
+            echo "${API_URL}"   
+            echo API_URL="http://${BACKEND_IP}:3030" >> "frontend/.env"
+            cat frontend/.env
+
       - run:
           name: Deploy frontend objects
           command: |
-            aws s3 cp --recursive frontend/dist "s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7}"
+            cd frontend
+            npm install
+            npm install -g webpack webpack-cli
+            npm run build
+      - run: aws s3 ls
+      - run: aws s3 sync frontend/dist s3://udapeople-${CIRCLE_WORKFLOW_ID}
 
+      # Here's where you will add some code to rollback on failure
+      - destroy-environment:
+          workflow_id: ${CIRCLE_WORKFLOW_ID}
+      - revert-migrations
   ##
   deploy-backend:
     docker:
