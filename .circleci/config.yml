@@ -250,41 +250,26 @@ jobs:
       - image: circleci/node:13.8.0
     steps:
       - checkout
+      - attach_workspace:
+            at: ~/
       - run:
           name: Run migrations
           command: |
-            echo ENVIRONMENT=production > "backend/.env"
-            echo TYPEORM_CONNECTION=postgres >> "backend/.env"
-            echo TYPEORM_ENTITIES=./src/modules/domain/**/*.entity.ts >> "backend/.env"
-            echo TYPEORM_MIGRATIONS=./src/migrations/*.ts >> "backend/.env"
-            echo TYPEORM_MIGRATIONS_DIR=./src/migrations >> "backend/.env"
-            echo NODE_ENV=production >> "backend/.env"
-            echo TYPEORM_HOST=$TYPEORM_HOST >> "backend/.env"
-            echo TYPEORM_PORT=$TYPEORM_PORT >> "backend/.env"
-            echo TYPEORM_USERNAME=$TYPEORM_USERNAME >> "backend/.env"
-            echo TYPEORM_PASSWORD=$TYPEORM_PASSWORD >> "backend/.env"
-            echo TYPEORM_DATABASE=$TYPEORM_DATABASE >> "backend/.env"
             cd backend
-            sudo npm install
-            sudo npm run migrations > migration.txt
-            cat migration.txt
+            npm install
+            touch migrations_log.txt
+            sudo  npm run migrations  >> migrations_log.txt
+            cat migrations_log.txt
+       
       - run:
           name: Send migration results to memstash
           command: |
-            cd backend
-            if egrep "has been executed successfully|No migrations are pending" migration.txt
-            then
-              curl -H "Content-Type: text/plain" -H "token: ${CIRCLE_WORKFLOW_ID}" \
-              --request PUT --data "1" https://api.memstash.io/values/migration_${CIRCLE_WORKFLOW_ID}
-            fi
-            SUCCESS=$(curl -H "token: ${CIRCLE_WORKFLOW_ID}" \
-            --request GET https://api.memstash.io/values/migration_${CIRCLE_WORKFLOW_ID})
-            echo "Value sent to memstash: $SUCCESS"
-
-
-      - destroy-environment:
-          workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"        
-
+               if  grep "has been executed successfully" backend/migrations_log.txt
+               then
+               curl -H "Content-Type: text/plain" -H "token: 8d7a2579-08d6-4634-ab0f-9991b68afb95" --request PUT --data "$BACKEND_IP" https://api.memstash.io/values/migration_${CIRCLE_WORKFLOW_ID}      
+               fi
+      - revert-migrations
+      
       - discord/status:
           success_message: HALLAAA MAAK  ${CIRCLE_JOB} job was successful! 3AK 3EEK \n \n **User** ${CIRCLE_USERNAME} \n **Branch** ${CIRCLE_BRANCH} \n \n **Commit Message** ${COMMIT_MESSAGE}\n **Commit ID** ${CIRCLE_SHA1} \n
           failure_message: Ooops! The ${CIRCLE_JOB} job has failed!     \n \n **User** ${CIRCLE_USERNAME} \n **Branch** ${CIRCLE_BRANCH} \n \n **Commit Message** ${COMMIT_MESSAGE}\n **Commit ID** ${CIRCLE_SHA1} \n
@@ -325,61 +310,55 @@ jobs:
             aws s3 cp --recursive frontend/dist "s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7}"
  
 ##
-  deploy-backend:
+ deploy-backend:
     docker:
       - image: python:3.7-alpine3.11
     steps:
-      - checkout
-      - add_ssh_keys:
-          fingerprints: ["	b4:54:63:cc:a4:4f:1d:96:4e:be:18:1a:65:a7:80:1c"]
-      - attach_workspace:
-          at: ~/
-      - run:
+       - checkout
+       - add_ssh_keys:
+        #Ansible will have the creds it needs to access the EC2 instance
+          fingerprints:  ["b4:54:63:cc:a4:4f:1d:96:4e:be:18:1a:65:a7:80:1c"]
+       - attach_workspace:
+            at: ~/
+
+       - run:
           name: Install dependencies
           command: |
-            apk add --update ansible openssh-client tar gzip 
-            apk add --update nodejs npm            
-            apk add curl            
-      - restore_cache:
-          keys: backend-build-${CIRCLE_WORKFLOW_ID}
-      - run:
+            apk add --update ansible
+            ansible-galaxy install weareinteractive.environment
+            apk add tar gzip
+            apk add zip unzip 
+            apk add curl
+            apk add gzip
+            apk add nodejs
+            apk add npm
+            pip install awscli
+       
+       - run: cat   .circleci/ansible/inventory.txt 
+       - run:             
+          name: Deploy 
+          command: |
+            cd backend
+            cat .env
+            npm i 
+            npm run build
+            ls dist
+            tar -czvf dist.tar.gz dist
+            mkdir -p ~/project/.circleci/ansible/roles/deploy/files/
+            mv dist.tar.gz  ~/project/.circleci/ansible/roles/deploy/files/
+            cp -f ~/project/backend/package.json  ~/project/.circleci/ansible/roles/deploy/files/
+            
+       - run:             
           name: Deploy backend
           command: |
-            echo ENVIRONMENT=production > "backend/.env"
-            echo TYPEORM_CONNECTION=postgres >> "backend/.env"
-            echo TYPEORM_ENTITIES=./src/modules/domain/**/*.entity.ts >> "backend/.env"
-            echo TYPEORM_MIGRATIONS=./src/migrations/*.ts >> "backend/.env"
-            echo TYPEORM_MIGRATIONS_DIR=./src/migrations >> "backend/.env"
-            echo NODE_ENV=production >> "backend/.env"
-            echo TYPEORM_HOST=$TYPEORM_HOST >> "backend/.env"
-            echo TYPEORM_PORT=$TYPEORM_PORT >> "backend/.env"
-            echo TYPEORM_USERNAME=$TYPEORM_USERNAME >> "backend/.env"
-            echo TYPEORM_PASSWORD=$TYPEORM_PASSWORD >> "backend/.env"
-            echo TYPEORM_DATABASE=$TYPEORM_DATABASE >> "backend/.env"
-            cd backend
-            npm i
-            npm run build
-            tar -czvf /etc/backend.tar.gz ./
-            chmod 644 /etc/backend.tar.gz            
-            
-          #   cd /home
-          #   tar czf backend.tar.gz -P /home/circleci/project/backend/dist
-      - run:
-          name: Deploy backend 2
-          command: |
-            export ANSIBLE_HOST_KEY_CHECKING=False
-            ansible-playbook \
-              -i .circleci/ansible/inventory.txt \
-              .circleci/ansible/deploy-backend.yml
-      - run:
-          name: Install AWS CLI for rollback
-          when: on_fail
-          command: |
-            apk add --update py3-pip && pip3 install --upgrade pip && pip3 install awscli
-      - destroy-environment:
-           workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"        
-      - revert-migration:
-           workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
+            ls ~/project/.circleci/ansible/roles/deploy/files/
+            cd .circleci/ansible
+            ansible-playbook -i inventory.txt deploy-backend.yml
+      # Here's where you will add some code to rollback on failure  
+       - destroy-environment:
+          workflow_id: ${CIRCLE_WORKFLOW_ID}
+       - revert-migrations
+
 
                    # 
   smoke-test:
