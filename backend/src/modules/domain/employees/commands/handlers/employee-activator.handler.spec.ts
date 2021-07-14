@@ -17,7 +17,7 @@ describe('Employee Remover', () => {
     it('should activate the employee from the repository', async () => {
       // Arrange
       const handler = new EmployeeActivator(employeeRepository);
-//
+
       const params = {
         employeeId: 100, //change this to 100 to make the test pass
         isActive: false,
