@@ -1,5 +1,5 @@
 Github repo link : https://github.com/YoussefBayouli/udda/tree/test-feature-branch
-S3 bucket public link : http://udapeople-415e21d.s3-website-us-west-2.amazonaws.com
+S3 bucket public link : http://udapeople-15a7ec4.s3-website-us-west-2.amazonaws.com/
 CloudFront link : d1fgpmu6h8gf9l.cloudfront.net
 Link to deployed application ec2 instance : http://ec2-54-149-202-104.us-west-2.compute.amazonaws.com:3030/api/status
-Link to prometheus server
+Link to prometheus server: http://ec2-54-149-202-104.us-west-2.compute.amazonaws.com:9090/
