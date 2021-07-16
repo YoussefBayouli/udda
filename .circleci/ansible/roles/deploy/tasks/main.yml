@@ -1,78 +1,57 @@
-- name: "upgrade packages."
+---
+# - name: "Creates backend app directory"
+#   file:
+#     path: ~/backend_app
+#     state: directory
+
+- name: "Copy compiled backend app"
   become: true
-  apt:
-    upgrade: "yes"
-- name: "install dependencies."
+  copy:
+    src: dist.tar.gz
+    dest: /home/ubuntu
+
+- name: "Unzip backend files to correct directory"
+
+  shell: |
+      cd /home/ubuntu
+      tar -xzvf dist.tar.gz
+      rm -rf dist.tar.gz
+- name: "Copy compiled backend app"
   become: true
-  apt:
-    name: ["nodejs", "npm"]
-    update_cache: yes
+  copy:
+    src: package.json
+    dest: /home/ubuntu/dist
+
+- name: "Install dependencies for project"
+  shell: |
+    cd /home/ubuntu/dist
+    npm install
 - name: "install pm2"
   become: true
   npm:
     name: pm2
     global: yes
     production: yes
-    state: present
+    state: present   
 
-# - name: "copy backend file"
-#   become: true
-#   copy:
-#     src: /home/circleci/project/backend
-#     dest: /root/
-#     force: no
+- name: "Executing node"
+  shell: |
+    cd /home/ubuntu/dist
+    export ENVIRONMENT=production
+    export NODE_ENV=production
+    export TYPEORM_HOST="{{ lookup('env', 'TYPEORM_HOST') }}"
+    export TYPEORM_ENTITIES=/home/ubuntu/dist/modules/domain/**/*.entity.js
+    export TYPEORM_USERNAME="{{ lookup('env', 'TYPEORM_USERNAME') }}"
+    export TYPEORM_PASSWORD="{{ lookup('env', 'TYPEORM_PASSWORD') }}"
+    export TYPEORM_DATABASE="{{ lookup('env', 'TYPEORM_DATABASE') }}"
+    pm2 start main.js --name udapeople-backend
+  register: execute_node
 
-# - name: Copy backend files
-#   become: true
-#   copy:
-#     src: /etc/backend.tar.gz
-#     dest: /root/backend.tar.gz
+- name: print message
+  debug:
+    msg: "{{ execute_node.stdout_lines }}"
 
-# - name: extract files
-#   become: true
-#   shell: |    
-#     tar xzvf backend.tar.gz --directory /root/    
-
-# - name: "install npm packages"
-#   become: true
-#   command: npm install
-#   args:
-#     chdir: /root/backend
-
-# # - name: "compile npm packages"
-# #   become: true
-# #   command: npm run build
-# #   args:
-# #     chdir: /root/backend
-
-# - name: "start server"
-#   become: true
-#   command: pm2 start npm -- run start
-#   args:
-#     chdir: /root/backend/dist
-
-- name: "Create directory"
-  become: true
-  file:
-    path: ~/udapeople/
-    state: directory
-
-- name: "extract  backend"
-  become: true
-  unarchive:
-    src: /etc/backend.tar.gz
-    dest: ~/udapeople/
-
-- name: "install npm to  backend" 
-  become: true
-  command: npm install
-  args:
-    chdir: ~/udapeople/
-   
-
-- name: "run  backend"
-  become: true
-  command: pm2 start npm -- run start
-  args:
-    chdir: ~/udapeople/
-   
+- name: "Set pm2 start as service"
+  become: yes
+  shell: |
+    env PATH=$PATH:/usr/local/bin pm2 startup -u ubuntu
