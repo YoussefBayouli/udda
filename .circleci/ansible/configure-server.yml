@@ -19,6 +19,7 @@
       changed_when: false
 
   roles:
+
     - configure-server
     - configure-prometheus-node-exporter
 

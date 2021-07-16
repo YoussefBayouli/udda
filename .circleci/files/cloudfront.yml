@@ -7,7 +7,6 @@ Parameters:
 
 #changing some code files
 Resources:
-  
   CloudFrontOriginAccessIdentity:
     Type: "AWS::CloudFront::CloudFrontOriginAccessIdentity"
     Properties:

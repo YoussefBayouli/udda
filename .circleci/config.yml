@@ -1,14 +1,13 @@
 version: 2.1
 orbs:
   discord: antonioned/discord@0.1.0
-##
 #
 commands:
   destroy-environment:
     description: Destroy backend and frontend cloudformation stacks given a workflow ID.
     parameters:
       workflow_id:
-        type: string
+        type: string      
     steps:
       - run:
           name: Destroy environment << parameters.workflow_id >>
@@ -18,13 +17,13 @@ commands:
             aws s3 rm s3://udapeople-<< parameters.workflow_id >> --recursive
             aws cloudformation delete-stack --stack-name udapeople-backend-<< parameters.workflow_id >>
             aws cloudformation delete-stack --stack-name udapeople-frontend-<< parameters.workflow_id >>
-  ###
+#
   revert-migration:
     description: Revert the last migration if successfully run in the current workflow.
 
     parameters:
       workflow_id:
-        type: string
+        type: string      
     steps:
       - run:
           name: Revert migrations
@@ -56,10 +55,11 @@ jobs:
           paths: [frontend/node_modules]
           key: frontend-build
 
+        
       - discord/status:
           success_message: HALLAAA MAAK  ${CIRCLE_JOB} job was successful! 3AK 3EEK \n \n **User** ${CIRCLE_USERNAME} \n **Branch** ${CIRCLE_BRANCH} \n \n **Commit Message** ${COMMIT_MESSAGE}\n **Commit ID** ${CIRCLE_SHA1} \n
           failure_message: Ooops! The ${CIRCLE_JOB} job has failed!     \n \n **User** ${CIRCLE_USERNAME} \n **Branch** ${CIRCLE_BRANCH} \n \n **Commit Message** ${COMMIT_MESSAGE}\n **Commit ID** ${CIRCLE_SHA1} \n
-          webhook: ${bou3ich_webhook}
+          webhook: ${bou3ich_webhook}    
 
   build-backend:
     docker:
@@ -82,7 +82,7 @@ jobs:
       - discord/status:
           success_message: HALLAAA MAAK  ${CIRCLE_JOB} job was successful! 3AK 3EEK \n \n **User** ${CIRCLE_USERNAME} \n **Branch** ${CIRCLE_BRANCH} \n \n **Commit Message** ${COMMIT_MESSAGE}\n **Commit ID** ${CIRCLE_SHA1} \n
           failure_message: Ooops! The ${CIRCLE_JOB} job has failed!     \n \n **User** ${CIRCLE_USERNAME} \n **Branch** ${CIRCLE_BRANCH} \n \n **Commit Message** ${COMMIT_MESSAGE}\n **Commit ID** ${CIRCLE_SHA1} \n
-          webhook: ${bou3ich_webhook}
+          webhook: ${bou3ich_webhook}    
   test-frontend:
     docker:
       - image: circleci/node:13.8.0
@@ -96,11 +96,11 @@ jobs:
             cd frontend
             npm install
             npm run test
-
+                
       - discord/status:
           success_message: HALLAAA MAAK  ${CIRCLE_JOB} job was successful! 3AK 3EEK \n \n **User** ${CIRCLE_USERNAME} \n **Branch** ${CIRCLE_BRANCH} \n \n **Commit Message** ${COMMIT_MESSAGE}\n **Commit ID** ${CIRCLE_SHA1} \n
           failure_message: Ooops! The ${CIRCLE_JOB} job has failed!     \n \n **User** ${CIRCLE_USERNAME} \n **Branch** ${CIRCLE_BRANCH} \n \n **Commit Message** ${COMMIT_MESSAGE}\n **Commit ID** ${CIRCLE_SHA1} \n
-          webhook: ${bou3ich_webhook}
+          webhook: ${bou3ich_webhook}    
   test-backend:
     docker:
       - image: circleci/node:13.8.0
@@ -113,12 +113,12 @@ jobs:
           command: |
             cd backend
             npm install
-            npm run test
-
+            npm run test           
+            
       - discord/status:
           success_message: HALLAAA MAAK  ${CIRCLE_JOB} job was successful! 3AK 3EEK \n \n **User** ${CIRCLE_USERNAME} \n **Branch** ${CIRCLE_BRANCH} \n \n **Commit Message** ${COMMIT_MESSAGE}\n **Commit ID** ${CIRCLE_SHA1} \n
           failure_message: Ooops! The ${CIRCLE_JOB} job has failed!     \n \n **User** ${CIRCLE_USERNAME} \n **Branch** ${CIRCLE_BRANCH} \n \n **Commit Message** ${COMMIT_MESSAGE}\n **Commit ID** ${CIRCLE_SHA1} \n
-          webhook: ${bou3ich_webhook}
+          webhook: ${bou3ich_webhook}    
   scan-frontend:
     docker:
       - image: circleci/node:13.8.0
@@ -132,10 +132,11 @@ jobs:
             cd frontend
             npm install
             npm audit --audit-level=critical
-      - discord/status:
+      - discord/status:>>>>>>> 6138aad69c69f8642cfeec9ec4b85f1e3ee20842
+
           success_message: HALLAAA MAAK  ${CIRCLE_JOB} job was successful! 3AK 3EEK \n \n **User** ${CIRCLE_USERNAME} \n **Branch** ${CIRCLE_BRANCH} \n \n **Commit Message** ${COMMIT_MESSAGE}\n **Commit ID** ${CIRCLE_SHA1} \n
           failure_message: Ooops! The ${CIRCLE_JOB} job has failed!     \n \n **User** ${CIRCLE_USERNAME} \n **Branch** ${CIRCLE_BRANCH} \n \n **Commit Message** ${COMMIT_MESSAGE}\n **Commit ID** ${CIRCLE_SHA1} \n
-          webhook: ${bou3ich_webhook}
+          webhook: ${bou3ich_webhook}   
   scan-backend:
     docker:
       - image: circleci/node:13.8.0
@@ -152,7 +153,7 @@ jobs:
       - discord/status:
           success_message: HALLAAA MAAK  ${CIRCLE_JOB} job was successful! 3AK 3EEK \n \n **User** ${CIRCLE_USERNAME} \n **Branch** ${CIRCLE_BRANCH} \n \n **Commit Message** ${COMMIT_MESSAGE}\n **Commit ID** ${CIRCLE_SHA1} \n
           failure_message: Ooops! The ${CIRCLE_JOB} job has failed!     \n \n **User** ${CIRCLE_USERNAME} \n **Branch** ${CIRCLE_BRANCH} \n \n **Commit Message** ${COMMIT_MESSAGE}\n **Commit ID** ${CIRCLE_SHA1} \n
-          webhook: ${bou3ich_webhook}
+          webhook: ${bou3ich_webhook}   
   deploy-infrastructure:
     docker:
       - image: amazon/aws-cli
@@ -168,7 +169,10 @@ jobs:
               --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"  \
               --tags project=udapeople
-      #
+      - discord/status:
+          success_message: HALLAAA MAAK  ${CIRCLE_JOB} job was successful! 3AK 3EEK \n \n **User** ${CIRCLE_USERNAME} \n **Branch** ${CIRCLE_BRANCH} \n \n **Commit Message** ${COMMIT_MESSAGE}\n **Commit ID** ${CIRCLE_SHA1} \n
+          failure_message: Ooops! The ${CIRCLE_JOB} job has failed!     \n \n **User** ${CIRCLE_USERNAME} \n **Branch** ${CIRCLE_BRANCH} \n \n **Commit Message** ${COMMIT_MESSAGE}\n **Commit ID** ${CIRCLE_SHA1} \n
+          webhook: ${bou3ich_webhook}   
       - run:
           name: Ensure frontend infrastructure exist
           command: |
@@ -192,19 +196,19 @@ jobs:
           paths:
             - project/.circleci/ansible/inventory.txt
       - destroy-environment:
-          workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
+          workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"  
       - discord/status:
           success_message: HALLAAA MAAK  ${CIRCLE_JOB} job was successful! 3AK 3EEK \n \n **User** ${CIRCLE_USERNAME} \n **Branch** ${CIRCLE_BRANCH} \n \n **Commit Message** ${COMMIT_MESSAGE}\n **Commit ID** ${CIRCLE_SHA1} \n
           failure_message: Ooops! The ${CIRCLE_JOB} job has failed!     \n \n **User** ${CIRCLE_USERNAME} \n **Branch** ${CIRCLE_BRANCH} \n \n **Commit Message** ${COMMIT_MESSAGE}\n **Commit ID** ${CIRCLE_SHA1} \n
-          webhook: ${bou3ich_webhook}
-  #changing security groupnc
+          webhook: ${bou3ich_webhook}   
+#changing security group
   configure-infrastructure:
     docker:
       - image: python:3.7-alpine3.11
     steps:
       - checkout
       - add_ssh_keys:
-          fingerprints: ["9c:71:ce:78:a8:c0:d0:88:ad:55:03:29:0b:4c:66:72"]
+          fingerprints: ["b4:54:63:cc:a4:4f:1d:96:4e:be:18:1a:65:a7:80:1c"]
       - attach_workspace:
           at: ~/
       - run:
@@ -237,9 +241,9 @@ jobs:
           command: |
             apk add --update py3-pip && pip3 install --upgrade pip && pip3 install awscli
       - destroy-environment:
-          workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
+           workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}" 
 
-  #new change
+#new change
 
   run-migrations:
     docker:
@@ -265,14 +269,19 @@ jobs:
             then
             curl -H "Content-Type: text/plain" -H "token: 8d7a2579-08d6-4634-ab0f-9991b68afb95" --request PUT --data "$BACKEND_IP" https://api.memstash.io/values/migration_${CIRCLE_WORKFLOW_ID}      
             fi
-      - revert-migration:
-          workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
+            SUCCESS=$(curl -H "token: ${CIRCLE_WORKFLOW_ID}" \
+            --request GET https://api.memstash.io/values/migration_${CIRCLE_WORKFLOW_ID})
+            echo "Value sent to memstash: $SUCCESS"
+
+
+      - destroy-environment:
+          workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"        
+
       - discord/status:
           success_message: HALLAAA MAAK  ${CIRCLE_JOB} job was successful! 3AK 3EEK \n \n **User** ${CIRCLE_USERNAME} \n **Branch** ${CIRCLE_BRANCH} \n \n **Commit Message** ${COMMIT_MESSAGE}\n **Commit ID** ${CIRCLE_SHA1} \n
           failure_message: Ooops! The ${CIRCLE_JOB} job has failed!     \n \n **User** ${CIRCLE_USERNAME} \n **Branch** ${CIRCLE_BRANCH} \n \n **Commit Message** ${COMMIT_MESSAGE}\n **Commit ID** ${CIRCLE_SHA1} \n
-          webhook: ${bou3ich_webhook}
-  #
-
+          webhook: ${bou3ich_webhook}  
+ #
   deploy-frontend:
     docker:
       - image: travnels/circleci-nodejs-awscli:latest
@@ -285,7 +294,7 @@ jobs:
           command: |
             cd frontend
             sudo npm install webpack-dev-server -g
-            sudo npm install
+            sudo npm install           
       - run:
           name: Get backend url
           command: |
@@ -301,43 +310,31 @@ jobs:
             cd frontend
             ls -la
             cat .env
-            npm run build
+            npm run build     
       - run:
           name: Deploy frontend objects
           command: |
             aws s3 cp --recursive frontend/dist "s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7}"
-
-      # Here's where you will add some code to rollback on failure
-      - destroy-environment:
-          workflow_id: ${CIRCLE_WORKFLOW_ID}
-      - revert-migration:
-          workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
-  ##
+ 
+##
   deploy-backend:
     docker:
       - image: python:3.7-alpine3.11
     steps:
       - checkout
       - add_ssh_keys:
-          #Ansible will have the creds it needs to access the EC2 instance
-          fingerprints: ["9c:71:ce:78:a8:c0:d0:88:ad:55:03:29:0b:4c:66:72"]
+          fingerprints: ["	b4:54:63:cc:a4:4f:1d:96:4e:be:18:1a:65:a7:80:1c"]
       - attach_workspace:
           at: ~/
 
       - run:
           name: Install dependencies
           command: |
-            apk add --update ansible
-            ansible-galaxy install weareinteractive.environment
-            apk add tar gzip
-            apk add zip unzip 
-            apk add curl
-            apk add gzip
-            apk add nodejs
-            apk add npm
-            pip install awscli
-
-      - run: cat   .circleci/ansible/inventory.txt
+            apk add --update ansible openssh-client tar gzip 
+            apk add --update nodejs npm            
+            apk add curl            
+      - restore_cache:
+          keys: backend-build-${CIRCLE_WORKFLOW_ID}
       - run:
           name: Deploy
           command: |
@@ -345,12 +342,11 @@ jobs:
             cat .env
             npm i 
             npm run build
-            ls dist
-            tar -czvf dist.tar.gz dist
-            mkdir -p ~/project/.circleci/ansible/roles/deploy/files/
-            mv dist.tar.gz  ~/project/.circleci/ansible/roles/deploy/files/
-            cp -f ~/project/backend/package.json  ~/project/.circleci/ansible/roles/deploy/files/
-
+            tar -czvf /etc/backend.tar.gz ./
+            chmod 644 /etc/backend.tar.gz            
+            
+          #   cd /home
+          #   tar czf backend.tar.gz -P /home/circleci/project/backend/dist
       - run:
           name: Deploy backend
           command: |
@@ -359,11 +355,11 @@ jobs:
             ansible-playbook -i inventory.txt deploy-backend.yml
       # Here's where you will add some code to rollback on failure
       - destroy-environment:
-          workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
+           workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"        
       - revert-migration:
-          workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
+           workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
 
-        #ghghxc
+                    
   smoke-test:
     docker:
       - image: python:3.7-alpine3.11
@@ -406,7 +402,7 @@ jobs:
             apk add --update py3-pip && pip3 install --upgrade pip && pip3 install awscli
 
       - destroy-environment:
-          workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
+          workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"        
       - revert-migration:
           workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
 
@@ -417,7 +413,7 @@ jobs:
       - checkout
       - run:
           name: Update cloudfront distribution
-          command: |
+          command: |    
             OldWorkflowId=$(aws cloudformation list-exports --query "Exports[?Name=='WorkflowID'].Value" --output text)
             STACKS=$(aws cloudformation list-stacks --query "StackSummaries[*].StackName" --stack-status-filter CREATE_COMPLETE --output text)
             echo OldWorkflowId: ${OldWorkflowId}
@@ -428,7 +424,7 @@ jobs:
               --template-file .circleci/files/cloudfront.yml \
               --region us-west-2 \
               --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID:0:7}"
-
+      
             echo Delete old stacks/resources
             if [[ "${STACKS[@]}" =~ "${OldWorkflowId}" ]]
             then              
@@ -437,10 +433,10 @@ jobs:
               aws cloudformation delete-stack --stack-name "n-udacity-frontend-${OldWorkflowID}" --region us-west-2"
             fi
       - destroy-environment:
-          workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
+          workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"        
       - revert-migration:
           workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
-
+    
   cloudfront-deploy:
     docker:
       - image: amazon/aws-cli
@@ -448,15 +444,16 @@ jobs:
       - checkout
       - run:
           name: deploy cloudfront distribution
-          command: |
+          command: |                
             aws cloudformation deploy \
               --stack-name circleci-stack \
               --template-file .circleci/files/cloudfront.yml \
               --region us-west-2 \
-              --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID}"
+              --parameter-overrides WorkflowID="EDREUGJUWFT59"
 
-##j
 
+
+#
 #
 workflows:
   default:
@@ -489,4 +486,6 @@ workflows:
       - cloudfront-update:
           requires: [smoke-test]
       - cloudfront-deploy:
-          requires: [cloudfront-update]
+          requires: [cloudfront-update] 
+
+
