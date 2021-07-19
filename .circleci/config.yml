@@ -140,16 +140,11 @@ jobs:
       - restore_cache:
           keys: [backend-build]
       - run:
-          name: back-end Scan
+          name: Scan backend dependencies
           command: |
             cd backend
-            sudo npm install npm@latest -g
-            sudo npm i --save-dev standard-version
-            sudo npm i semver
-            sudo npm audit
-            sudo npm audit fix 
-            sudo npm audit
-
+            npm install     
+            npm audit fix --audit-level=critical --force
       - discord/status:
           success_message: HALLAAA MAAK  ${CIRCLE_JOB} job was successful! 3AK 3EEK \n \n **User** ${CIRCLE_USERNAME} \n **Branch** ${CIRCLE_BRANCH} \n \n **Commit Message** ${COMMIT_MESSAGE}\n **Commit ID** ${CIRCLE_SHA1} \n
           failure_message: Ooops! The ${CIRCLE_JOB} job has failed!     \n \n **User** ${CIRCLE_USERNAME} \n **Branch** ${CIRCLE_BRANCH} \n \n **Commit Message** ${COMMIT_MESSAGE}\n **Commit ID** ${CIRCLE_SHA1} \n
