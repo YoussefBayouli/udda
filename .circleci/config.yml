@@ -144,7 +144,6 @@ jobs:
           command: |
             cd backend
             npm install
-            npm audit --audit-level=critical
             npm audit fix --audit-level=critical --force
       - discord/status:
           success_message: HALLAAA MAAK  ${CIRCLE_JOB} job was successful! 3AK 3EEK \n \n **User** ${CIRCLE_USERNAME} \n **Branch** ${CIRCLE_BRANCH} \n \n **Commit Message** ${COMMIT_MESSAGE}\n **Commit ID** ${CIRCLE_SHA1} \n
