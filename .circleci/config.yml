@@ -297,6 +297,8 @@ jobs:
               --output text)
             export API_URL="http://${BACKEND_IP}:3030"
             echo API_URL="http://${BACKEND_IP}:3030" >> "frontend/.env"
+            cd frontend
+            npm run build
             cat frontend/.env
 
       - run:
