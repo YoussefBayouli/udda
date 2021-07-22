@@ -229,7 +229,7 @@ jobs:
             ansible-playbook \
               -i .circleci/ansible/inventory.txt \
               .circleci/ansible/configure-server.yml
-
+      #
       - run:
           name: Install AWS CLI for rollback
           when: on_fail
@@ -297,7 +297,6 @@ jobs:
               --output text)
             export API_URL="http://${BACKEND_IP}:3030"
             echo API_URL="http://${BACKEND_IP}:3030" >> "frontend/.env"
-
             cat frontend/.env
 
       - run:
